@@ -91,6 +91,14 @@
                                     <action selector="back" destination="Nsy-Ig-j02" eventType="touchUpInside" id="5ig-8u-5yy"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a07-39-erD">
+                                <rect key="frame" x="74" y="264" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="toggleSoundWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="zVH-r2-1AC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -126,7 +134,6 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="back" destination="oCH-ae-fwO" eventType="touchUpInside" id="pDr-bh-HiU"/>
-                                    <action selector="back" destination="Nsy-Ig-j02" eventType="touchUpInside" id="wJ7-sq-ULk"/>
                                 </connections>
                             </button>
                         </subviews>
