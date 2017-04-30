@@ -52,7 +52,7 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <segue destination="oCH-ae-fwO" kind="show" id="Elf-Vf-PBt"/>
+                                    <segue destination="oCH-ae-fwO" kind="presentation" id="3TV-TG-29R"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -117,7 +117,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z62-57-JS2">
-                                <rect key="frame" x="223" y="464" width="71" height="54"/>
+                                <rect key="frame" x="223" y="494" width="71" height="54"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.15686274510000001" green="0.66274509800000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="再生"/>
@@ -156,7 +156,7 @@
                         <viewControllerLayoutGuide type="top" id="j1M-qw-8jJ"/>
                         <viewControllerLayoutGuide type="bottom" id="L77-rh-YMk"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="gn8-Bg-M0N">
+                    <view key="view" contentMode="scaleToFill" id="gn8-Bg-M0N" customClass="Listen">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -176,6 +176,20 @@
                                 <connections>
                                     <action selector="back" destination="oCH-ae-fwO" eventType="touchUpInside" id="pDr-bh-HiU"/>
                                 </connections>
+                            </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="4OO-4e-0Vb">
+                                <rect key="frame" x="168" y="172" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rd5-vg-MTm">
+                                <rect key="frame" x="187" y="442" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rmT-bQ-Az9">
+                                <rect key="frame" x="117" y="329" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

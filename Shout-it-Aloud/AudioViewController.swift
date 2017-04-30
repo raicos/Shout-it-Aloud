@@ -9,6 +9,7 @@
 import UIKit
 import AudioKit
 import MediaPlayer
+import AudioUnit
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     
@@ -23,6 +24,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         player = MPMusicPlayerController.applicationMusicPlayer()
+        
         
     }
     
@@ -53,7 +55,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         player.stop()
         
         // 選択した曲情報がmediaItemCollectionに入っているので、これをplayerにセット。
-        //player.setQueueWithItemCollection(mediaItemCollection)
         player.setQueue(with: mediaItemCollection)
         
         // 選択した曲から最初の曲の情報を表示
@@ -126,6 +127,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         // ミュージックプレーヤー通知の無効化
         player.endGeneratingPlaybackNotifications()
     }
+    
+    
+    
+    
     
     
 }
