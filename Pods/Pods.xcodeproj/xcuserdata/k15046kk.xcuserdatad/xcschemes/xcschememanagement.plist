@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>EFAutoScrollLabel.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Shout-it-Aloud.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,7 +32,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E011E043B64E6D571D1E12E13ADC9443</key>
+		<key>5A95BBB2F3372A4FE63AABA1778D13D5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>EF9B31C4EBC03B303651139661C10725</key>
 		<dict>
 			<key>primary</key>
 			<true/>

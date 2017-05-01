@@ -11,7 +11,8 @@ import AVFoundation
 import AudioToolbox
 
 class Record: UIViewController {
-    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    
+    //@IBOutlet weak var indicatorView: UIActivityIndicatorView!
     var audioEngine : AVAudioEngine!
     //
     var audioFile : AVAudioFile!
@@ -29,11 +30,9 @@ class Record: UIViewController {
         
         if self.isPlay {
             self.play.setTitle("PLAY", for: .normal)
-            self.indicator(value: false)
             self.stopPlay()
         } else {
             self.play.setTitle("STOP", for: .normal)
-            self.indicator(value: true)
             self.startPlay()
         }
     }
@@ -43,11 +42,9 @@ class Record: UIViewController {
         
         if self.isRec {
             self.rec.setTitle("RECORDING", for: .normal)
-            self.indicator(value: false)
             self.stopRecord()
         } else {
             self.rec.setTitle("STOP", for: .normal)
-            self.indicator(value: true)
             self.startRecord()
         }
     }
@@ -62,8 +59,6 @@ class Record: UIViewController {
         //
         self.audioEngine.attach(audioFilePlayer)
         self.audioEngine.attach(mixer)
-        
-        self.indicator(value: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -195,16 +190,7 @@ class Record: UIViewController {
             }
         }
     }
-    
-    func indicator(value: Bool) {
-        if value {
-            self.indicatorView.startAnimating()
-            self.indicatorView.isHidden = false
-        } else {
-            self.indicatorView.stopAnimating()
-            self.indicatorView.isHidden = true
-        }
-    }
+
 }
 
 

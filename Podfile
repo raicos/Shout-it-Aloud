@@ -7,6 +7,7 @@ target 'Shout-it-Aloud' do
 
   # Pods for Shout-it-Aloud
   pod 'AudioKit'
+  pod 'EFAutoScrollLabel', '~> 1.0.1'
 
   target 'Shout-it-AloudTests' do
     inherit! :search_paths

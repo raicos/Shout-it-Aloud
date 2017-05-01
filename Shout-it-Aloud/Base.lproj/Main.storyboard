@@ -61,6 +61,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-129" y="-61"/>
         </scene>
         <!--Audio View Controller-->
         <scene sceneID="nON-7o-jee">
@@ -88,7 +89,7 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="back" destination="Nsy-Ig-j02" eventType="touchUpInside" id="pEk-4d-ak9"/>
+                                    <action selector="back" destination="Nsy-Ig-j02" eventType="touchUpInside" id="eVa-7R-Zrb"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXP-aV-4RZ">
@@ -122,7 +123,7 @@
                                 <color key="backgroundColor" red="0.15686274510000001" green="0.66274509800000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="再生"/>
                                 <connections>
-                                    <action selector="pushPlayWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="Kvs-2A-Ttn"/>
+                                    <action selector="pushPlayWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="kbv-Br-RGW"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nqT-u0-tzv">
@@ -131,17 +132,22 @@
                                 <color key="backgroundColor" red="0.15686274510000001" green="0.66274509800000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="選択"/>
                                 <connections>
-                                    <action selector="pickWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="2BD-am-VMW"/>
+                                    <action selector="pickWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="yPj-Ct-lmg"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z2m-pG-xqm">
+                                <rect key="frame" x="171" y="406" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="pushPauseWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="pzf-23-pds"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="albumLabel" destination="VXP-aV-4RZ" id="dem-Al-gbv"/>
-                        <outlet property="artistLabel" destination="ncD-kP-HKp" id="5UC-t6-v6v"/>
-                        <outlet property="imageView" destination="pi8-Xw-nDg" id="8Kv-lL-G3D"/>
-                        <outlet property="songLabel" destination="3Uh-J7-GRd" id="Aq9-6o-Lrw"/>
+                        <outlet property="messageLabel" destination="VXP-aV-4RZ" id="7NS-Md-JMY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LUQ-Sb-4rc" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -177,10 +183,6 @@
                                     <action selector="back" destination="oCH-ae-fwO" eventType="touchUpInside" id="pDr-bh-HiU"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="4OO-4e-0Vb">
-                                <rect key="frame" x="168" y="172" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rd5-vg-MTm">
                                 <rect key="frame" x="187" y="442" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

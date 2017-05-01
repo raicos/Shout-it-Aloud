@@ -6,33 +6,41 @@
 //  Copyright © 2017年 army. All rights reserved.
 //
 
+
 import UIKit
 import AudioKit
 import MediaPlayer
 import AudioUnit
+import EFAutoScrollLabel
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var artistLabel: UILabel!
-    @IBOutlet weak var albumLabel: UILabel!
-    @IBOutlet weak var songLabel: UILabel!
+    // プレイヤー用のproperty
+    var audioPlayer:AVAudioPlayer?
     
-    var player = MPMusicPlayerController()
-    var nowPlaying: Bool = false
+    
+    @IBOutlet weak var messageLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        player = MPMusicPlayerController.applicationMusicPlayer()
+        // Do any additional setup after loading the view, typically from a nib.
+        
+        // メッセージラベルのテキストをクリア
+        messageLabel.text = ""
+        messageLabel.adjustsFontForContentSizeCategory = false
+        
+        
         
         
     }
     
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func back(){
+    @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -41,96 +49,95 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         let picker = MPMediaPickerController()
         // ピッカーのデリゲートを設定
         picker.delegate = self
-        // 複数選択にする。（falseにすると、単数選択になる）
+        // 複数選択を不可にする。（trueにすると、複数選択できる）
         picker.allowsPickingMultipleItems = false
         // ピッカーを表示する
         present(picker, animated: true, completion: nil)
         
     }
     
-    /// メディアアイテムピッカーでアイテムを選択完了したときに呼び出される
+    // メディアアイテムピッカーでアイテムを選択完了したときに呼び出される
     func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         
-        // プレイヤーを止める
-        player.stop()
-        
-        // 選択した曲情報がmediaItemCollectionに入っているので、これをplayerにセット。
-        player.setQueue(with: mediaItemCollection)
-        
-        // 選択した曲から最初の曲の情報を表示
-        if let mediaItem = mediaItemCollection.items.first {
-            updateSongInformationUI(mediaItem: mediaItem)
+        // このfunctionを抜ける際にピッカーを閉じ、破棄する
+        // (defer文はfunctionを抜ける際に実行される)
+        defer {
+            dismiss(animated: true, completion: nil)
         }
         
-        // ピッカーを閉じ、破棄する
-       // dismissViewControllerAnimated(true, completion: nil)
-        self.dismiss(animated: true, completion: nil)
+        
+        // 選択した曲情報がmediaItemCollectionに入っている
+        // mediaItemCollection.itemsから入っているMPMediaItemの配列を取得できる
+        let items = mediaItemCollection.items
+        if items.isEmpty {
+            // itemが一つもなかったので戻る
+            return
+        }
+        
+        // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
+        let item = items[0]
+        if let url = item.assetURL {
+            do {
+                // itemのassetURLからプレイヤーを作成する
+                audioPlayer = try AVAudioPlayer(contentsOf: url)
+            } catch  {
+                // エラー発生してプレイヤー作成失敗
+                
+                // messageLabelに失敗したことを表示
+                messageLabel.text = "このurlは再生できません"
+                
+                audioPlayer = nil
+                
+                
+                // 戻る
+                return
+                
+            }
+            
+            // 再生開始
+            if let player = audioPlayer {
+                player.play()
+                
+                // メッセージラベルに曲タイトルを表示
+                // (MPMediaItemが曲情報を持っているのでそこから取得)
+                let title = item.title ?? ""
+                messageLabel.text = title
+                // test.text = title
+                
+            }
+        } else {
+            // messageLabelに失敗したことを表示
+            messageLabel.text = "アイテムのurlがnilなので再生できません"
+            
+            audioPlayer = nil
+        }
         
     }
     
     
-    /// 選択がキャンセルされた場合に呼ばれる
+    //選択がキャンセルされた場合に呼ばれる
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         // ピッカーを閉じ、破棄する
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
-    /// 曲情報を表示する
-    func updateSongInformationUI(mediaItem: MPMediaItem) {
-        
-        // 曲情報表示
-        // (a ?? b は、a != nil ? a! : b を示す演算子です)
-        // (aがnilの場合にはbとなります)
-        artistLabel.text = mediaItem.artist ?? "不明なアーティスト"
-        albumLabel.text = mediaItem.albumTitle ?? "不明なアルバム"
-        songLabel.text = mediaItem.title ?? "不明な曲"
-        
-        // アートワーク表示
-        if let artwork = mediaItem.artwork {
-            let image = artwork.image(at: imageView.bounds.size)
-            imageView.image = image
-        } else {
-            // アートワークがないとき
-            // (今回は灰色表示としました)
-            imageView.image = nil
-            imageView.backgroundColor = UIColor.gray
-        }
-        
-    }
     
-    // 再生ボタンを押した時
-    @IBAction func pushPlay(sender: UIButton) {
-        if nowPlaying {
-            player.pause()
-            sender.setTitle("再生", for: .normal)
-            nowPlaying = false
-        }else{
+    @IBAction func pushPlay(sender: AnyObject) {
+        // 再生
+        if let player = audioPlayer {
             player.play()
-            sender.setTitle("一時停止", for: .normal)
-            nowPlaying = true
         }
     }
     
-    /// 再生中の曲が変更になったときに呼ばれる
-    func nowPlayingItemChanged(notification: NSNotification) {
-        
-        if let mediaItem = player.nowPlayingItem {
-            updateSongInformationUI(mediaItem: mediaItem)
+    @IBAction func pushPause(sender: AnyObject) {
+        // 一時停止
+        if let player = audioPlayer {
+            player.pause()
         }
-        
     }
-    
-    deinit {
-        // 再生中アイテム変更に対する監視をはずす
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.removeObserver(self, name: NSNotification.Name.MPMusicPlayerControllerNowPlayingItemDidChange, object: player)
-        // ミュージックプレーヤー通知の無効化
-        player.endGeneratingPlaybackNotifications()
-    }
-    
-    
-    
-    
     
     
 }
+    
+    
+
