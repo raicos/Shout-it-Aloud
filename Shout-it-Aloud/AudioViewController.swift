@@ -14,28 +14,51 @@ import AudioUnit
 import EFAutoScrollLabel
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
-
+    
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var messageLabel: UILabel!
     
     var audioFile: AVAudioFile!
     var audioPlayerNode: AVAudioPlayerNode!
     var audioEngine: AVAudioEngine!
-    //var mixer: AVAudioMixerNode!
+    var mixer: AVAudioMixerNode!
+    var outref: ExtAudioFileRef?
     
+    var filePath: String? = nil
     var isSelectMusic: Bool = false
+    
+    var audioP: AVAudioPlayer?
     
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.audioEngine = AVAudioEngine()
         self.audioPlayerNode = AVAudioPlayerNode()
-        //self.mixer = AVAudioMixerNode()
+        self.mixer = AVAudioMixerNode()
         self.audioEngine.attach(audioPlayerNode)
-        //self.audioEngine.attach(mixer)
+        self.audioEngine.attach(mixer)
+        
+        let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
+                                   sampleRate: 44100.0,
+                                   channels: 1,
+                                   interleaved: true)
+        
+        self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
+        self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
+        try! self.audioEngine.start()
+        
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio) != .authorized {
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeAudio,
+                                          completionHandler: {(granted: Bool) in
+            })
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -74,52 +97,20 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         }
         
         // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
-        let item = items[0]
-        if let url = item.assetURL {
-            self.audioFile = try! AVAudioFile(forReading: url)
+        //let item = items.first
+        if let item = items.first {
+            audioP = try! AVAudioPlayer(contentsOf: item.assetURL!)
+            audioP?.play()
+            //record(item: item)
             
             
-           /* let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
-                                       sampleRate: 44100.0,
-                                       channels: 1,
-                                       interleaved: true)*/
             
-            //self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
-            self.audioEngine.connect(self.audioPlayerNode, to: audioEngine.mainMixerNode,
-                                     format: self.audioFile.processingFormat)
-            //self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
             
-            self.audioPlayerNode.scheduleSegment(audioFile,
-                                                 startingFrame: AVAudioFramePosition(0),
-                                                 frameCount: AVAudioFrameCount(self.audioFile.length),
-                                                 at: nil,
-                                                 completionHandler: nil)
-            /*
-            let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
-            self.filePath =  dir.appending("/temp.wav")
-            
-            _ = ExtAudioFileCreateWithURL(URL(fileURLWithPath: self.filePath!) as CFURL,
-                                          kAudioFileWAVEType,
-                                          format.streamDescription,
-                                          nil,
-                                          AudioFileFlags.eraseFile.rawValue,
-                                          &outref)
-            
-            self.mixer.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate * 0.4), format: format, block: { (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) -> Void in
-                
-                let audioBuffer : AVAudioBuffer = buffer
-                _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
-            })*/
-            try! self.audioEngine.start()
-            self.audioPlayerNode.play()
-            self.playButton.setTitle("停止", for: .normal)
-            isSelectMusic = true
         } else {
             // messageLabelに失敗したことを表示
             messageLabel.text = "アイテムのurlがnilなので再生できません"
             audioPlayerNode = nil
         }
-        
     }
     
     //選択がキャンセルされた場合に呼ばれる
@@ -127,19 +118,66 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         dismiss(animated: true, completion: nil)
     }
     
+    func record(item: MPMediaItem) {
+        self.filePath = nil
+        
+       // try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
+       // try! AVAudioSession.sharedInstance().setActive(true)
+        let url = item.assetURL
+        self.audioFile = try! AVAudioFile(forReading: url!)
+        
+        
+        let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
+                                   sampleRate: 44100.0,
+                                   channels: 1,
+                                   interleaved: true)
+        // TODO
+        self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
+        self.audioEngine.connect(self.audioPlayerNode,
+                                 to: self.mixer,
+                                 format: self.audioFile.processingFormat)
+        self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
+        
+        self.audioPlayerNode.scheduleSegment(audioFile,
+                                             startingFrame: AVAudioFramePosition(0),
+                                             frameCount: AVAudioFrameCount(self.audioFile.length),
+                                             at: nil,
+                                             completionHandler: nil)
+        
+        let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
+        self.filePath =  dir.appending("/temp.wav")
+        
+        _ = ExtAudioFileCreateWithURL(URL(fileURLWithPath: self.filePath!) as CFURL,
+                                      kAudioFileWAVEType,
+                                      format.streamDescription,
+                                      nil,
+                                      AudioFileFlags.eraseFile.rawValue,
+                                      &outref)
+        
+        self.mixer.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate * 0.4), format: format, block: { (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) -> Void in
+            
+            let audioBuffer : AVAudioBuffer = buffer
+            _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
+        })
+        try! self.audioEngine.start()
+        self.audioPlayerNode.play()
+        self.playButton.setTitle("停止", for: .normal)
+        isSelectMusic = true
+    }
+    
     @IBAction func onPlayButton() {
         if isSelectMusic {
             if audioPlayerNode.isPlaying {
-                audioPlayerNode.pause()
+                audioPlayerNode.stop()
                 playButton.setTitle("再生", for: .normal)
             }else{
                 audioPlayerNode.play()
                 playButton.setTitle("停止", for: .normal)
             }
         }
-        
     }
-
+    
+    
     
 }
     
