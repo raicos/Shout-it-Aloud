@@ -8,7 +8,8 @@
 
 import UIKit
 import CoreMotion
-
+import EFAutoScrollLabel
+import AVFoundation
 
 class ListenViewController: UIViewController {
 
@@ -27,5 +28,10 @@ class ListenViewController: UIViewController {
     @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
     }
+    
+    
+    
+    
+    
 
 }

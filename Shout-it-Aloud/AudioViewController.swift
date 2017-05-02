@@ -14,128 +14,132 @@ import AudioUnit
 import EFAutoScrollLabel
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
-    
-    // プレイヤー用のproperty
-    var audioPlayer:AVAudioPlayer?
-    
-    
+
+    @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var messageLabel: UILabel!
+    
+    var audioFile: AVAudioFile!
+    var audioPlayerNode: AVAudioPlayerNode!
+    var audioEngine: AVAudioEngine!
+    //var mixer: AVAudioMixerNode!
+    
+    var isSelectMusic: Bool = false
+    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
-        // メッセージラベルのテキストをクリア
-        messageLabel.text = ""
-        messageLabel.adjustsFontForContentSizeCategory = false
-        
-        
-        
-        
+        self.audioEngine = AVAudioEngine()
+        self.audioPlayerNode = AVAudioPlayerNode()
+        //self.mixer = AVAudioMixerNode()
+        self.audioEngine.attach(audioPlayerNode)
+        //self.audioEngine.attach(mixer)
+
     }
-    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func pick(sender: AnyObject) {
+    @IBAction func pick(sender: UIButton) {
         // MPMediaPickerControllerのインスタンスを作成
         let picker = MPMediaPickerController()
-        // ピッカーのデリゲートを設定
         picker.delegate = self
-        // 複数選択を不可にする。（trueにすると、複数選択できる）
-        picker.allowsPickingMultipleItems = false
+        // 複数選択(true or false)
+        picker.allowsPickingMultipleItems = true
+        // 読み込めない曲は非表示
+        picker.showsItemsWithProtectedAssets = false
+        picker.showsCloudItems = false
         // ピッカーを表示する
         present(picker, animated: true, completion: nil)
-        
     }
     
-    // メディアアイテムピッカーでアイテムを選択完了したときに呼び出される
+    // 選択完了したときに呼ばれる
     func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         
-        // このfunctionを抜ける際にピッカーを閉じ、破棄する
-        // (defer文はfunctionを抜ける際に実行される)
         defer {
             dismiss(animated: true, completion: nil)
         }
-        
         
         // 選択した曲情報がmediaItemCollectionに入っている
         // mediaItemCollection.itemsから入っているMPMediaItemの配列を取得できる
         let items = mediaItemCollection.items
         if items.isEmpty {
-            // itemが一つもなかったので戻る
             return
         }
         
         // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
         let item = items[0]
         if let url = item.assetURL {
-            do {
-                // itemのassetURLからプレイヤーを作成する
-                audioPlayer = try AVAudioPlayer(contentsOf: url)
-            } catch  {
-                // エラー発生してプレイヤー作成失敗
-                
-                // messageLabelに失敗したことを表示
-                messageLabel.text = "このurlは再生できません"
-                
-                audioPlayer = nil
-                
-                
-                // 戻る
-                return
-                
-            }
+            self.audioFile = try! AVAudioFile(forReading: url)
             
-            // 再生開始
-            if let player = audioPlayer {
-                player.play()
+            
+           /* let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
+                                       sampleRate: 44100.0,
+                                       channels: 1,
+                                       interleaved: true)*/
+            
+            //self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
+            self.audioEngine.connect(self.audioPlayerNode, to: audioEngine.mainMixerNode,
+                                     format: self.audioFile.processingFormat)
+            //self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
+            
+            self.audioPlayerNode.scheduleSegment(audioFile,
+                                                 startingFrame: AVAudioFramePosition(0),
+                                                 frameCount: AVAudioFrameCount(self.audioFile.length),
+                                                 at: nil,
+                                                 completionHandler: nil)
+            /*
+            let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
+            self.filePath =  dir.appending("/temp.wav")
+            
+            _ = ExtAudioFileCreateWithURL(URL(fileURLWithPath: self.filePath!) as CFURL,
+                                          kAudioFileWAVEType,
+                                          format.streamDescription,
+                                          nil,
+                                          AudioFileFlags.eraseFile.rawValue,
+                                          &outref)
+            
+            self.mixer.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate * 0.4), format: format, block: { (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) -> Void in
                 
-                // メッセージラベルに曲タイトルを表示
-                // (MPMediaItemが曲情報を持っているのでそこから取得)
-                let title = item.title ?? ""
-                messageLabel.text = title
-                // test.text = title
-                
-            }
+                let audioBuffer : AVAudioBuffer = buffer
+                _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
+            })*/
+            try! self.audioEngine.start()
+            self.audioPlayerNode.play()
+            self.playButton.setTitle("停止", for: .normal)
+            isSelectMusic = true
         } else {
             // messageLabelに失敗したことを表示
             messageLabel.text = "アイテムのurlがnilなので再生できません"
-            
-            audioPlayer = nil
+            audioPlayerNode = nil
         }
         
     }
     
-    
     //選択がキャンセルされた場合に呼ばれる
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
-        // ピッカーを閉じ、破棄する
         dismiss(animated: true, completion: nil)
     }
     
-    
-    @IBAction func pushPlay(sender: AnyObject) {
-        // 再生
-        if let player = audioPlayer {
-            player.play()
+    @IBAction func onPlayButton() {
+        if isSelectMusic {
+            if audioPlayerNode.isPlaying {
+                audioPlayerNode.pause()
+                playButton.setTitle("再生", for: .normal)
+            }else{
+                audioPlayerNode.play()
+                playButton.setTitle("停止", for: .normal)
+            }
         }
+        
     }
-    
-    @IBAction func pushPause(sender: AnyObject) {
-        // 一時停止
-        if let player = audioPlayer {
-            player.pause()
-        }
-    }
-    
+
     
 }
     

@@ -121,9 +121,9 @@
                                 <rect key="frame" x="223" y="494" width="71" height="54"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.15686274510000001" green="0.66274509800000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="再生"/>
+                                <state key="normal" title="停止"/>
                                 <connections>
-                                    <action selector="pushPlayWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="kbv-Br-RGW"/>
+                                    <action selector="onPlayButton" destination="Nsy-Ig-j02" eventType="touchUpInside" id="sed-Rt-ekB"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nqT-u0-tzv">
@@ -139,15 +139,13 @@
                                 <rect key="frame" x="171" y="406" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="pushPauseWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="pzf-23-pds"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="messageLabel" destination="VXP-aV-4RZ" id="7NS-Md-JMY"/>
+                        <outlet property="playButton" destination="z62-57-JS2" id="36x-bX-j93"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LUQ-Sb-4rc" userLabel="First Responder" sceneMemberID="firstResponder"/>
