@@ -16,6 +16,23 @@ import EFAutoScrollLabel
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     
     @IBOutlet weak var playButton: UIButton!
+    @IBAction func onPlayButton() {
+        if isSelectMusic {
+            if audioPlayerNode.isPlaying {
+                audioPlayerNode.pause()
+                playButton.setTitle("再生", for: .normal)
+            }else{
+                audioPlayerNode.play()
+                playButton.setTitle("停止", for: .normal)
+            }
+        }
+    }
+    
+    @IBOutlet weak var inputVolumeSlider: UISlider!
+    @IBAction func volumeController() {
+        audioEngine.inputNode?.volume = inputVolumeSlider.value
+    }
+    
     @IBOutlet weak var messageLabel: UILabel!
     
     var audioFile: AVAudioFile!
@@ -26,6 +43,11 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     
     var filePath: String? = nil
     var isSelectMusic: Bool = false
+    
+    let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
+                               sampleRate: 44100.0,
+                               channels: 1,
+                               interleaved: true)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,15 +63,11 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         self.audioEngine.attach(audioPlayerNode)
         self.audioEngine.attach(mixer)
         
-        let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
-                                   sampleRate: 44100.0,
-                                   channels: 1,
-                                   interleaved: true)
         
+        self.audioEngine.inputNode?.volume = inputVolumeSlider.value
         self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
         self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
         try! self.audioEngine.start()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,8 +100,14 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         present(picker, animated: true, completion: nil)
     }
     
+    //選択がキャンセルされた場合に呼ばれる
+    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
     // 選択完了したときに呼ばれる
-    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+    func mediaPicker(_ mediaPicker: MPMediaPickerController,
+                     didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         
         defer {
             dismiss(animated: true, completion: nil)
@@ -110,11 +134,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         }
     }
     
-    //選択がキャンセルされた場合に呼ばれる
-    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
+    // 曲の再生
     func record(item: MPMediaItem) {
         self.audioEngine.reset()
         self.initialize()
@@ -123,23 +143,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         let url = item.assetURL
         self.audioFile = try! AVAudioFile(forReading: url!)
         
-        
-        let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
-                                   sampleRate: 44100.0,
-                                   channels: 1,
-                                   interleaved: true)
-
-        self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
-        self.audioEngine.connect(self.audioPlayerNode,
-                                 to: self.mixer,
-                                 format: self.audioFile.processingFormat)
-        self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
-        
-        self.audioPlayerNode.scheduleSegment(audioFile,
-                                             startingFrame: AVAudioFramePosition(0),
+        self.audioEngine.connect(self.audioPlayerNode, to: self.mixer, format: self.audioFile.processingFormat)
+        self.audioPlayerNode.scheduleSegment(audioFile, startingFrame: AVAudioFramePosition(0),
                                              frameCount: AVAudioFrameCount(self.audioFile.length),
-                                             at: nil,
-                                             completionHandler: nil)
+                                             at: nil, completionHandler: nil)
         
         let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
         self.filePath =  dir.appending("/temp.wav")
@@ -158,27 +165,8 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         })
         
         try! self.audioEngine.start()
-        // すぐ再生
-        //self.audioPlayerNode.play()
         self.playButton.setTitle("再生", for: .normal)
         isSelectMusic = true
     }
-    
-    @IBAction func onPlayButton() {
-        if isSelectMusic {
-            if audioPlayerNode.isPlaying {
-                audioPlayerNode.pause()
-                playButton.setTitle("再生", for: .normal)
-            }else{
-                audioPlayerNode.play()
-                playButton.setTitle("停止", for: .normal)
-            }
-        }
-    }
-    
-    
-    
-}
-    
-    
 
+}
