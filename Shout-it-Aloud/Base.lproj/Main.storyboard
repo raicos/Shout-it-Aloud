@@ -178,32 +178,22 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="back" destination="oCH-ae-fwO" eventType="touchUpInside" id="pDr-bh-HiU"/>
+                                    <action selector="back" destination="oCH-ae-fwO" eventType="touchUpInside" id="dot-MY-Sop"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rd5-vg-MTm">
                                 <rect key="frame" x="187" y="442" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="rec:" destination="oCH-ae-fwO" eventType="touchUpInside" id="Vwf-SU-FSZ"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rmT-bQ-Az9">
                                 <rect key="frame" x="117" y="329" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="play:" destination="oCH-ae-fwO" eventType="touchUpInside" id="DCD-cw-Qlu"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <connections>
-                        <outlet property="play" destination="rmT-bQ-Az9" id="jZa-V0-zhQ"/>
-                        <outlet property="rec" destination="rd5-vg-MTm" id="z45-ef-JRV"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hfq-YC-eXR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

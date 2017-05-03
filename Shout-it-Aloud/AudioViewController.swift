@@ -26,14 +26,15 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     
     var filePath: String? = nil
     var isSelectMusic: Bool = false
-    
-    var audioP: AVAudioPlayer?
-    
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initialize()
+        playButton.setTitle("再生", for: .normal)
+    }
+    
+    func initialize() {
         self.audioEngine = AVAudioEngine()
         self.audioPlayerNode = AVAudioPlayerNode()
         self.mixer = AVAudioMixerNode()
@@ -49,7 +50,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
         try! self.audioEngine.start()
         
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +74,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         let picker = MPMediaPickerController()
         picker.delegate = self
         // 複数選択(true or false)
-        picker.allowsPickingMultipleItems = true
+        picker.allowsPickingMultipleItems = false
         // 読み込めない曲は非表示
         picker.showsItemsWithProtectedAssets = false
         picker.showsCloudItems = false
@@ -97,11 +97,8 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         }
         
         // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
-        //let item = items.first
         if let item = items.first {
-            audioP = try! AVAudioPlayer(contentsOf: item.assetURL!)
-            audioP?.play()
-            //record(item: item)
+            record(item: item)
             
             
             
@@ -109,7 +106,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         } else {
             // messageLabelに失敗したことを表示
             messageLabel.text = "アイテムのurlがnilなので再生できません"
-            audioPlayerNode = nil
+            //audioPlayerNode = nil
         }
     }
     
@@ -119,10 +116,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     }
     
     func record(item: MPMediaItem) {
+        self.audioEngine.reset()
+        self.initialize()
         self.filePath = nil
         
-       // try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
-       // try! AVAudioSession.sharedInstance().setActive(true)
         let url = item.assetURL
         self.audioFile = try! AVAudioFile(forReading: url!)
         
@@ -131,7 +128,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
                                    sampleRate: 44100.0,
                                    channels: 1,
                                    interleaved: true)
-        // TODO
+
         self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
         self.audioEngine.connect(self.audioPlayerNode,
                                  to: self.mixer,
@@ -159,16 +156,18 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
             let audioBuffer : AVAudioBuffer = buffer
             _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
         })
+        
         try! self.audioEngine.start()
-        self.audioPlayerNode.play()
-        self.playButton.setTitle("停止", for: .normal)
+        // すぐ再生
+        //self.audioPlayerNode.play()
+        self.playButton.setTitle("再生", for: .normal)
         isSelectMusic = true
     }
     
     @IBAction func onPlayButton() {
         if isSelectMusic {
             if audioPlayerNode.isPlaying {
-                audioPlayerNode.stop()
+                audioPlayerNode.pause()
                 playButton.setTitle("再生", for: .normal)
             }else{
                 audioPlayerNode.play()
