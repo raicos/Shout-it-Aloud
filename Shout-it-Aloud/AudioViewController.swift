@@ -13,28 +13,43 @@ import MediaPlayer
 import AudioUnit
 import EFAutoScrollLabel
 
-class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
+class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate {
     
     @IBOutlet weak var playButton: UIButton!
     @IBAction func onPlayButton() {
         if isSelectMusic {
-            if audioPlayerNode.isPlaying {
-                audioPlayerNode.pause()
+            if audioPlayer.isPlaying {
+                audioPlayer.pause()
                 playButton.setTitle("再生", for: .normal)
             }else{
-                audioPlayerNode.play()
+                audioPlayer.play()
                 playButton.setTitle("停止", for: .normal)
             }
         }
     }
     
+    @IBOutlet weak var musicVolumeSlider: UISlider!
+    @IBAction func musicVolumeController() {
+        audioPlayer.volume = musicVolumeSlider.value
+    }
+    
     @IBOutlet weak var inputVolumeSlider: UISlider!
-    @IBAction func volumeController() {
+    @IBAction func inputVolumeController() {
         audioEngine.inputNode?.volume = inputVolumeSlider.value
+    }
+    
+    @IBOutlet weak var boostSwitch: UISwitch!
+    @IBAction func boostVolumeController() {
+        if boostSwitch.isOn {
+            inputVolumeSlider.maximumValue = 50
+        }else{
+            inputVolumeSlider.maximumValue = 10
+        }
     }
     
     @IBOutlet weak var messageLabel: UILabel!
     
+    var audioPlayer: AVAudioPlayer!
     var audioFile: AVAudioFile!
     var audioPlayerNode: AVAudioPlayerNode!
     var audioEngine: AVAudioEngine!
@@ -45,22 +60,23 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     var isSelectMusic: Bool = false
     
     let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
-                               sampleRate: 44100.0,
-                               channels: 1,
-                               interleaved: true)
+                               sampleRate: 44100.0, channels: 1, interleaved: true)
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        initialize()
+        audioEngine = AVAudioEngine()
+        audioEngine.inputNode?.volume = inputVolumeSlider.value
+        audioEngine.connect(audioEngine.inputNode!, to: audioEngine.mainMixerNode)
+        try! audioEngine.start()
+        //initialize()
         playButton.setTitle("再生", for: .normal)
     }
     
     func initialize() {
         self.audioEngine = AVAudioEngine()
-        self.audioPlayerNode = AVAudioPlayerNode()
+        //self.audioPlayerNode = AVAudioPlayerNode()
         self.mixer = AVAudioMixerNode()
-        self.audioEngine.attach(audioPlayerNode)
+        //self.audioEngine.attach(audioPlayerNode)
         self.audioEngine.attach(mixer)
         
         
@@ -69,7 +85,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
         self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
         try! self.audioEngine.start()
     }
-    
+    /*
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio) != .authorized {
@@ -78,13 +94,19 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
             })
         }
     }
-
+*/
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
     @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        isSelectMusic = false
+        playButton.setTitle("再生", for: .normal)
+        
     }
     
     @IBAction func pick(sender: UIButton) {
@@ -104,6 +126,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         dismiss(animated: true, completion: nil)
     }
+
     
     // 選択完了したときに呼ばれる
     func mediaPicker(_ mediaPicker: MPMediaPickerController,
@@ -113,41 +136,43 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
             dismiss(animated: true, completion: nil)
         }
         
-        // 選択した曲情報がmediaItemCollectionに入っている
-        // mediaItemCollection.itemsから入っているMPMediaItemの配列を取得できる
         let items = mediaItemCollection.items
         if items.isEmpty {
             return
         }
         
         // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
-        if let item = items.first {
-            record(item: item)
-            
-            
-            
+        let item = items.first
+        if let url = item?.assetURL {
+            audioPlayer = try! AVAudioPlayer(contentsOf: url)
+            audioPlayer.delegate = self
+            playButton.setTitle("停止", for: .normal)
+            audioPlayer.play()
+            isSelectMusic = true
+            // test 用
+            audioPlayer.currentTime = TimeInterval(50)
             
         } else {
-            // messageLabelに失敗したことを表示
-            messageLabel.text = "アイテムのurlがnilなので再生できません"
-            //audioPlayerNode = nil
+            self.isSelectMusic = false
+            self.playButton.setTitle("再生", for: .normal)
+            
         }
     }
     
-    // 曲の再生
+    // 曲の録音　no use
     func record(item: MPMediaItem) {
-        self.audioEngine.reset()
-        self.initialize()
         self.filePath = nil
         
         let url = item.assetURL
-        self.audioFile = try! AVAudioFile(forReading: url!)
+        audioPlayer = try! AVAudioPlayer(contentsOf: url!)
+        audioPlayer.delegate = self
+        /*self.audioFile = try! AVAudioFile(forReading: url!)
         
         self.audioEngine.connect(self.audioPlayerNode, to: self.mixer, format: self.audioFile.processingFormat)
         self.audioPlayerNode.scheduleSegment(audioFile, startingFrame: AVAudioFramePosition(0),
                                              frameCount: AVAudioFrameCount(self.audioFile.length),
                                              at: nil, completionHandler: nil)
-        
+        */
         let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
         self.filePath =  dir.appending("/temp.wav")
         
@@ -163,10 +188,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate {
             let audioBuffer : AVAudioBuffer = buffer
             _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
         })
-        
-        try! self.audioEngine.start()
-        self.playButton.setTitle("再生", for: .normal)
-        isSelectMusic = true
     }
 
 }

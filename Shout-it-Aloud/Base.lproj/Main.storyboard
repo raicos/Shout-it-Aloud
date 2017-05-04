@@ -110,26 +110,42 @@
                                     <action selector="pickWithSender:" destination="Nsy-Ig-j02" eventType="touchUpInside" id="yPj-Ct-lmg"/>
                                 </connections>
                             </button>
-                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="20" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="hFN-tT-Xg1">
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="hFN-tT-Xg1">
                                 <rect key="frame" x="14" y="78" width="292" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
-                                    <action selector="volumeController" destination="Nsy-Ig-j02" eventType="valueChanged" id="jgu-bs-XqK"/>
+                                    <action selector="inputVolumeController" destination="Nsy-Ig-j02" eventType="valueChanged" id="pYY-GR-uoe"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yHx-mg-xl2">
-                                <rect key="frame" x="125" y="184" width="42" height="21"/>
+                                <rect key="frame" x="125" y="321" width="42" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dOT-yT-FBF">
+                                <rect key="frame" x="255" y="116" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="boostVolumeController" destination="Nsy-Ig-j02" eventType="valueChanged" id="aqT-p6-Trb"/>
+                                </connections>
+                            </switch>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="8bh-cf-dwM">
+                                <rect key="frame" x="14" y="155" width="292" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="musicVolumeController" destination="Nsy-Ig-j02" eventType="valueChanged" id="xQu-n7-sjA"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="boostSwitch" destination="dOT-yT-FBF" id="NG9-Dr-aHb"/>
                         <outlet property="inputVolumeSlider" destination="hFN-tT-Xg1" id="1jq-Uz-814"/>
                         <outlet property="messageLabel" destination="yHx-mg-xl2" id="ibY-QL-uvv"/>
+                        <outlet property="musicVolumeSlider" destination="8bh-cf-dwM" id="XU2-hq-r5P"/>
                         <outlet property="playButton" destination="z62-57-JS2" id="36x-bX-j93"/>
                     </connections>
                 </viewController>
