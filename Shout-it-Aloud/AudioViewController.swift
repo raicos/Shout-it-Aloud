@@ -9,9 +9,10 @@
 
 import UIKit
 import AudioKit
-import MediaPlayer
 import AudioUnit
-import EFAutoScrollLabel
+import MediaPlayer
+import Accelerate
+// import EFAutoScrollLabel
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate {
     
@@ -62,6 +63,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
     let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
                                sampleRate: 44100.0, channels: 1, interleaved: true)
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
         audioEngine = AVAudioEngine()
@@ -70,7 +72,11 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         try! audioEngine.start()
         //initialize()
         playButton.setTitle("再生", for: .normal)
+        
+        
     }
+    
+
     
     func initialize() {
         self.audioEngine = AVAudioEngine()
@@ -126,7 +132,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         dismiss(animated: true, completion: nil)
     }
-
     
     // 選択完了したときに呼ばれる
     func mediaPicker(_ mediaPicker: MPMediaPickerController,
@@ -151,12 +156,28 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             isSelectMusic = true
             // test 用
             audioPlayer.currentTime = TimeInterval(50)
+            audioPlayer.updateMeters()
+            let db:Float = audioPlayer.averagePower(forChannel: 0)
+            print(db)
             
         } else {
             self.isSelectMusic = false
             self.playButton.setTitle("再生", for: .normal)
             
         }
+    }
+    // テスト用
+    var tt:Float=0
+    var db:Float = 0
+    @IBAction func testButton() {
+        audioPlayer.isMeteringEnabled = true
+        audioPlayer.updateMeters()
+        db = audioPlayer.averagePower(forChannel: 0)
+        let db1:Float = audioPlayer.averagePower(forChannel: 1)
+        // let db2:Float = audioPlayer.averagePower(forChannel: 2)
+        
+        tt = pow(10, 0.05*db)
+        print(db,db1,audioPlayer.peakPower(forChannel: 0),tt)
     }
     
     // 曲の録音　no use

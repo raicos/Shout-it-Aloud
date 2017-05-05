@@ -10,21 +10,37 @@ import UIKit
 import CoreMotion
 import EFAutoScrollLabel
 import AVFoundation
+import AudioKit
 
 class ListenViewController: UIViewController {
-
+    var oscillator = AKOscillator(waveform: AKTable(AKTableType.triangle))
+    var oscillator2 = AKOscillator(waveform: AKTable(AKTableType.square))
+    var audioEngine: AVAudioEngine!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        let mixer = AKMixer()
+        AudioKit.output = mixer
+        AudioKit.start()
+        oscillator.amplitude = 0.1
+        oscillator.frequency = 100
+        oscillator2.amplitude = 0.5
+        oscillator2.frequency = 230
+        oscillator.start()
+        oscillator2.start()
+        
+        let plot = AKNodeFFTPlot(mixer,frame:CGRect(x:0,y:0,width:250,height:500))
+        //plot.backgroundColor = UIColor.black
+        plot.shouldFill = true
+        plot.shouldMirror = false
+        plot.shouldCenterYAxis = false
+        plot.color = UIColor.purple
+        self.view.addSubview(plot)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-
     @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
     }
