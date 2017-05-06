@@ -13,6 +13,7 @@ import AVFoundation
 import AudioKit
 
 class ListenViewController: UIViewController {
+    var timer:Timer!
     var oscillator = AKOscillator(waveform: AKTable(AKTableType.triangle))
     var oscillator2 = AKOscillator(waveform: AKTable(AKTableType.square))
     var audioEngine: AVAudioEngine!

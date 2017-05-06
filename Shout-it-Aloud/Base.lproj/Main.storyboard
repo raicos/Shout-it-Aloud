@@ -75,6 +75,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fdR-pZ-lQW">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYn-ZO-8nm" customClass="customButton" customModule="Shout_it_Aloud" customModuleProvider="target">
                                 <rect key="frame" x="16" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -148,6 +153,7 @@
                     </view>
                     <connections>
                         <outlet property="boostSwitch" destination="dOT-yT-FBF" id="NG9-Dr-aHb"/>
+                        <outlet property="canvasView" destination="fdR-pZ-lQW" id="jz0-pI-k0A"/>
                         <outlet property="inputVolumeSlider" destination="hFN-tT-Xg1" id="1jq-Uz-814"/>
                         <outlet property="messageLabel" destination="yHx-mg-xl2" id="ibY-QL-uvv"/>
                         <outlet property="musicVolumeSlider" destination="8bh-cf-dwM" id="XU2-hq-r5P"/>
@@ -215,11 +221,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pod-qM-Kgt" customClass="EZAudioPlot">
-                                <rect key="frame" x="40" y="292" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g9e-ne-z8m">
                                 <rect key="frame" x="258" y="505" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

@@ -19,7 +19,9 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
     
     var audioPlayer: AVAudioPlayer!
     var audioEngine: AVAudioEngine!
-    
+    var timer = Timer()
+    @IBOutlet var canvasView: UIView!
+
     var isSelectMusic: Bool = false
     
     @IBOutlet weak var playButton: UIButton!
@@ -28,9 +30,11 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
             if audioPlayer.isPlaying {
                 audioPlayer.pause()
                 playButton.setTitle("再生", for: .normal)
+                timer.invalidate()
             }else{
                 audioPlayer.play()
                 playButton.setTitle("停止", for: .normal)
+                timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(drawingView), userInfo: nil, repeats: true)
             }
         }
     }
@@ -80,30 +84,7 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
         try! self.audioEngine.start()
         
         self.playButton.setTitle("再生", for: .normal)
-        
-        //ShapeLayer.disableActions = true
-        canvas.backgroundColor = C4Grey
-        let blue = Circle(center: Point.init(5, 5), radius: 50)
-        blue.fillColor = Color(red: 226/255, green: 122/255, blue: 4/255, alpha: 1)
-        blue.center = self.canvas.center
-        self.canvas.add(blue)
-        
-        //ShapeLayer.disableActions = false
-        let blueAnimation = ViewAnimation(duration: 0.7) {
-            blue.transform = Transform.makeScale(100, 100)
-            blue.fillColor = Color(red: 0, green: 0, blue: 0, alpha: 0)
-        }
-        
-        blueAnimation.addCompletionObserver {
-            blue.removeFromSuperview()
-        }
-        wait(3.0){
-             blueAnimation.animate()
-        }
-       
-    }
-    override var prefersStatusBarHidden: Bool {
-        return true
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -111,6 +92,7 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
     }
     
     @IBAction func back() {
+        self.audioPlayer.stop()
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -149,27 +131,25 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
         if let url = item?.assetURL {
             audioPlayer = try! AVAudioPlayer(contentsOf: url)
             audioPlayer.delegate = self
-            playButton.setTitle("停止", for: .normal)
-            audioPlayer.play()
+            //playButton.setTitle("停止", for: .normal)
+            //audioPlayer.play()
             audioPlayer.isMeteringEnabled = true
             isSelectMusic = true
             
-            // test 用
-            audioPlayer.currentTime = TimeInterval(50)
-
             
         } else {
             self.isSelectMusic = false
             self.playButton.setTitle("再生", for: .normal)
             
         }
+        
     }
     
     // 曲が終了した時に呼ばれる
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         isSelectMusic = false
         playButton.setTitle("再生", for: .normal)
-        
+        timer.invalidate()
     }
     
     func getLevelwithChannel(ch: Int) -> Float{
@@ -183,35 +163,30 @@ class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AV
         }
     }
     
-    // 曲の録音　no use
-    func record(item: MPMediaItem) {
-        self.filePath = nil
+    let circle = Circle(center: Point(5,5), radius: 10)
+    override func setup() {
         
-        let url = item.assetURL
-        audioPlayer = try! AVAudioPlayer(contentsOf: url!)
-        audioPlayer.delegate = self
-        /*self.audioFile = try! AVAudioFile(forReading: url!)
-        
-        self.audioEngine.connect(self.audioPlayerNode, to: self.mixer, format: self.audioFile.processingFormat)
-        self.audioPlayerNode.scheduleSegment(audioFile, startingFrame: AVAudioFramePosition(0),
-                                             frameCount: AVAudioFrameCount(self.audioFile.length),
-                                             at: nil, completionHandler: nil)
-        */
-        let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! as String
-        self.filePath =  dir.appending("/temp.wav")
-        
-        _ = ExtAudioFileCreateWithURL(URL(fileURLWithPath: self.filePath!) as CFURL,
-                                      kAudioFileWAVEType,
-                                      format.streamDescription,
-                                      nil,
-                                      AudioFileFlags.eraseFile.rawValue,
-                                      &outref)
-        
-        self.mixer.installTap(onBus: 0, bufferSize: AVAudioFrameCount(format.sampleRate * 0.4), format: format, block: { (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) -> Void in
-            
-            let audioBuffer : AVAudioBuffer = buffer
-            _ = ExtAudioFileWrite(self.outref!, buffer.frameLength, audioBuffer.audioBufferList)
-        })
+        circle.fillColor = Color(red: 50, green: 50, blue: 50, alpha: 1)
+        circle.center = Point(canvasView.center)
+        canvasView.add(circle)
     }
+    
+    //: Float = audio.getLevelwithChannel(ch: 1)
+    
+    
+    
 
+    func drawingView() {
+        let levelL: Float = getLevelwithChannel(ch: 0)
+        let animation = ViewAnimation(){
+            self.circle.transform = Transform.makeScale(Double(levelL*30), Double(levelL*30))
+            //self.circle.fillColor = Color(red: 0, green: 0, blue: 0, alpha: 0)
+        }
+        
+        /*
+         */
+        print(levelL*40)
+        animation.animate()
+        
+    }
 }
