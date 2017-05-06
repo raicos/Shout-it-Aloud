@@ -71,7 +71,7 @@
                         <viewControllerLayoutGuide type="top" id="ApN-RC-1cU"/>
                         <viewControllerLayoutGuide type="bottom" id="7B5-54-XjW"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="YTq-mP-RBR">
+                    <view key="view" contentMode="scaleToFill" id="YTq-mP-RBR" customClass="L">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -142,9 +142,6 @@
                                 <rect key="frame" x="226" y="411" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="testButton" destination="Nsy-Ig-j02" eventType="touchDown" id="E4p-UE-1tM"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -154,7 +151,7 @@
                         <outlet property="inputVolumeSlider" destination="hFN-tT-Xg1" id="1jq-Uz-814"/>
                         <outlet property="messageLabel" destination="yHx-mg-xl2" id="ibY-QL-uvv"/>
                         <outlet property="musicVolumeSlider" destination="8bh-cf-dwM" id="XU2-hq-r5P"/>
-                        <outlet property="playButton" destination="z62-57-JS2" id="36x-bX-j93"/>
+                        <outlet property="playButton" destination="z62-57-JS2" id="ZAj-GM-6vS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LUQ-Sb-4rc" userLabel="First Responder" sceneMemberID="firstResponder"/>

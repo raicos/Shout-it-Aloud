@@ -11,8 +11,13 @@ import AudioKit
 import MediaPlayer
 import AudioKit
 import UIKit
+import C4
 
-class FFT: UIViewController, MPMediaPickerControllerDelegate {
+class FFT: CanvasController, MPMediaPickerControllerDelegate {
+    
+    override func setup() {
+        //AudioViewController.
+    }
     @IBOutlet var b:UIButton!
     @IBOutlet private var frequencyLabel: UILabel!
     @IBOutlet private var amplitudeLabel: UILabel!

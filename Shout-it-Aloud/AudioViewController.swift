@@ -12,9 +12,10 @@ import AudioKit
 import AudioUnit
 import MediaPlayer
 import Accelerate
+import C4
 // import EFAutoScrollLabel
 
-class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate {
+class AudioViewController: CanvasController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate {
     
     var audioPlayer: AVAudioPlayer!
     var audioEngine: AVAudioEngine!
@@ -73,18 +74,38 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        audioPlayer.isMeteringEnabled = true
-
-        audioEngine = AVAudioEngine()
-        audioEngine.inputNode?.volume = inputVolumeSlider.value
-        audioEngine.connect(audioEngine.inputNode!, to: audioEngine.mainMixerNode)
-        try! audioEngine.start()
-
-        playButton.setTitle("再生", for: .normal)
+        self.audioEngine = AVAudioEngine()
+        self.audioEngine.inputNode?.volume = self.inputVolumeSlider.value
+        self.audioEngine.connect(self.audioEngine.inputNode!, to: self.audioEngine.mainMixerNode)
+        try! self.audioEngine.start()
         
+        self.playButton.setTitle("再生", for: .normal)
         
+        //ShapeLayer.disableActions = true
+        canvas.backgroundColor = C4Grey
+        let blue = Circle(center: Point.init(5, 5), radius: 50)
+        blue.fillColor = Color(red: 226/255, green: 122/255, blue: 4/255, alpha: 1)
+        blue.center = self.canvas.center
+        self.canvas.add(blue)
+        
+        //ShapeLayer.disableActions = false
+        let blueAnimation = ViewAnimation(duration: 0.7) {
+            blue.transform = Transform.makeScale(100, 100)
+            blue.fillColor = Color(red: 0, green: 0, blue: 0, alpha: 0)
+        }
+        
+        blueAnimation.addCompletionObserver {
+            blue.removeFromSuperview()
+        }
+        wait(3.0){
+             blueAnimation.animate()
+        }
+       
     }
-
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -130,6 +151,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             audioPlayer.delegate = self
             playButton.setTitle("停止", for: .normal)
             audioPlayer.play()
+            audioPlayer.isMeteringEnabled = true
             isSelectMusic = true
             
             // test 用
