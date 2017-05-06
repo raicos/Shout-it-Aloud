@@ -16,6 +16,11 @@ import Accelerate
 
 class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate {
     
+    var audioPlayer: AVAudioPlayer!
+    var audioEngine: AVAudioEngine!
+    
+    var isSelectMusic: Bool = false
+    
     @IBOutlet weak var playButton: UIButton!
     @IBAction func onPlayButton() {
         if isSelectMusic {
@@ -48,59 +53,38 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         }
     }
     
+    // 使用するかわからない
     @IBOutlet weak var messageLabel: UILabel!
     
-    var audioPlayer: AVAudioPlayer!
+
     var audioFile: AVAudioFile!
     var audioPlayerNode: AVAudioPlayerNode!
-    var audioEngine: AVAudioEngine!
+
     var mixer: AVAudioMixerNode!
     var outref: ExtAudioFileRef?
     
     var filePath: String? = nil
-    var isSelectMusic: Bool = false
+
     
     let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
                                sampleRate: 44100.0, channels: 1, interleaved: true)
-
+//
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        audioPlayer.isMeteringEnabled = true
+
         audioEngine = AVAudioEngine()
         audioEngine.inputNode?.volume = inputVolumeSlider.value
         audioEngine.connect(audioEngine.inputNode!, to: audioEngine.mainMixerNode)
         try! audioEngine.start()
-        //initialize()
+
         playButton.setTitle("再生", for: .normal)
         
         
     }
-    
 
-    
-    func initialize() {
-        self.audioEngine = AVAudioEngine()
-        //self.audioPlayerNode = AVAudioPlayerNode()
-        self.mixer = AVAudioMixerNode()
-        //self.audioEngine.attach(audioPlayerNode)
-        self.audioEngine.attach(mixer)
-        
-        
-        self.audioEngine.inputNode?.volume = inputVolumeSlider.value
-        self.audioEngine.connect(self.audioEngine.inputNode!, to: self.mixer, format: format)
-        self.audioEngine.connect(self.mixer, to: self.audioEngine.mainMixerNode, format: format)
-        try! self.audioEngine.start()
-    }
-    /*
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio) != .authorized {
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeAudio,
-                                          completionHandler: {(granted: Bool) in
-            })
-        }
-    }
-*/
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -108,13 +92,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
     @IBAction func back() {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        isSelectMusic = false
-        playButton.setTitle("再生", for: .normal)
-        
-    }
-    
+
     @IBAction func pick(sender: UIButton) {
         // MPMediaPickerControllerのインスタンスを作成
         let picker = MPMediaPickerController()
@@ -146,7 +124,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             return
         }
         
-        // 先頭のMPMediaItemを取得し、そのassetURLからプレイヤーを作成する
         let item = items.first
         if let url = item?.assetURL {
             audioPlayer = try! AVAudioPlayer(contentsOf: url)
@@ -154,11 +131,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             playButton.setTitle("停止", for: .normal)
             audioPlayer.play()
             isSelectMusic = true
+            
             // test 用
             audioPlayer.currentTime = TimeInterval(50)
-            audioPlayer.updateMeters()
-            let db:Float = audioPlayer.averagePower(forChannel: 0)
-            print(db)
+
             
         } else {
             self.isSelectMusic = false
@@ -166,18 +142,23 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             
         }
     }
-    // テスト用
-    var tt:Float=0
-    var db:Float = 0
-    @IBAction func testButton() {
-        audioPlayer.isMeteringEnabled = true
-        audioPlayer.updateMeters()
-        db = audioPlayer.averagePower(forChannel: 0)
-        let db1:Float = audioPlayer.averagePower(forChannel: 1)
-        // let db2:Float = audioPlayer.averagePower(forChannel: 2)
+    
+    // 曲が終了した時に呼ばれる
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        isSelectMusic = false
+        playButton.setTitle("再生", for: .normal)
         
-        tt = pow(10, 0.05*db)
-        print(db,db1,audioPlayer.peakPower(forChannel: 0),tt)
+    }
+    
+    func getLevelwithChannel(ch: Int) -> Float{
+        if audioPlayer.isPlaying {
+            audioPlayer.updateMeters()
+            let db: Float = audioPlayer.averagePower(forChannel: ch)
+            let power: Float = pow(10, (0.05 * db))
+            return power
+        } else {
+            return 0.0
+        }
     }
     
     // 曲の録音　no use
