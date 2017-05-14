@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09602C3A1EC6CB7100F7D519 /* FFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09602C391EC6CB7100F7D519 /* FFT.swift */; };
 		09C374DE1EB02FC80024E04B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C374DD1EB02FC80024E04B /* AppDelegate.swift */; };
 		09C374E01EB02FC80024E04B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C374DF1EB02FC80024E04B /* ViewController.swift */; };
 		09C374E31EB02FC80024E04B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09C374E11EB02FC80024E04B /* Main.storyboard */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		09602C391EC6CB7100F7D519 /* FFT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FFT.swift; sourceTree = "<group>"; };
 		09C374DA1EB02FC80024E04B /* Shout-it-Aloud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shout-it-Aloud.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C374DD1EB02FC80024E04B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		09C374DF1EB02FC80024E04B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				09C374E11EB02FC80024E04B /* Main.storyboard */,
 				09C3750D1EB040560024E04B /* AudioViewController.swift */,
 				09C375111EB485430024E04B /* Record.swift */,
+				09602C391EC6CB7100F7D519 /* FFT.swift */,
 				09C374E41EB02FC80024E04B /* Assets.xcassets */,
 				09C374E61EB02FC80024E04B /* LaunchScreen.storyboard */,
 				09C374E91EB02FC80024E04B /* Info.plist */,
@@ -465,6 +468,7 @@
 				09C3750E1EB040560024E04B /* AudioViewController.swift in Sources */,
 				09C375121EB485430024E04B /* Record.swift in Sources */,
 				09C374E01EB02FC80024E04B /* ViewController.swift in Sources */,
+				09602C3A1EC6CB7100F7D519 /* FFT.swift in Sources */,
 				09C375101EB045440024E04B /* ListenViewController.swift in Sources */,
 				09C374DE1EB02FC80024E04B /* AppDelegate.swift in Sources */,
 			);
