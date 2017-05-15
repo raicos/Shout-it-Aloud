@@ -11,11 +11,8 @@ import UIKit
 import AudioKit
 import AudioUnit
 import MediaPlayer
-import Accelerate
-import C4
-// import EFAutoScrollLabel
 
-class AudioViewController: UIViewController, MPMediaPickerControllerDelegate,AVAudioPlayerDelegate,AVAudioSessionDelegate {
+class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AVAudioPlayerDelegate,AVAudioSessionDelegate {
 
     var audioPlayer: AVAudioPlayer!
     var audioEngine: AVAudioEngine!
@@ -60,9 +57,13 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate,AVA
     @IBAction func inputMicController() {
         if inputMicSwitch.isOn {
             audioEngine.inputNode?.volume = inputVolumeSlider.value
+            inputVolumeSlider.isEnabled = true
+            boostSwitch.isEnabled = true
             inputVolumeLabel.text = "".appendingFormat("%.2f", inputVolumeSlider.value)
         } else {
             audioEngine.inputNode?.volume = 0
+            inputVolumeSlider.isEnabled = false
+            boostSwitch.isEnabled = false
             inputVolumeLabel.text = "MicOff"
         }
     }
@@ -70,6 +71,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate,AVA
     override func viewDidLoad() {
         super.viewDidLoad()
         mic()
+        self.musicVolumeSlider.isEnabled = false
         
         self.playButton.setTitle("再生", for: .normal)
 
@@ -120,25 +122,25 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate,AVA
             return
         }
         
-        
         let item = items.first
         if let url = item?.assetURL {
             audioPlayer = try! AVAudioPlayer(contentsOf: url)
             audioPlayer.delegate = self
             audioPlayer.isMeteringEnabled = true
             isSelectMusic = true
+            musicVolumeSlider.isEnabled = true
+            audioPlayer.volume = musicVolumeSlider.value
+            
+            // bluetooth のときだけにしたい
             /*
             AVAudioSession.sharedInstance().requestRecordPermission {_ in
-                print("permission 要求")
-                
                 do {
                     // bluetooth機器として設定
                     try AVAudioSession.sharedInstance().setCategory(
                         AVAudioSessionCategoryPlayAndRecord,
                         with:AVAudioSessionCategoryOptions.allowBluetooth )
                     
-                    try AVAudioSession.sharedInstance().overrideOutputAudioPort(.none)
-                    
+                    try AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
                     try AVAudioSession.sharedInstance().setActive(true)
                     
                 } catch {
@@ -158,6 +160,4 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate,AVA
         isSelectMusic = false
         playButton.setTitle("再生", for: .normal)
     }
-    
-
 }
