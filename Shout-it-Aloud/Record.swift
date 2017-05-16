@@ -41,8 +41,8 @@ class Record: UIViewController, MPMediaPickerControllerDelegate, EZAudioFileDele
         self.audioFile = EZAudioFile(url: filePathURL)
         self.audioFile.delegate = self
         
-        var buffer = self.audioFile.getWaveformData().buffer(forChannel: 0)
-        var bufferSize = self.audioFile.getWaveformData().bufferSize
+        let buffer = self.audioFile.getWaveformData().buffer(forChannel: 0)
+        let bufferSize = self.audioFile.getWaveformData().bufferSize
         self.audioPlot.updateBuffer(buffer, withBufferSize: bufferSize)
         
     }

@@ -47,7 +47,7 @@ class FFT {
             let mag = sqrtf(rel * rel + img * img)
             let log = "[%02d]: Mag: %5.2f, Rel: %5.2f, Img: %5.2f"
             print(String(format: log, n, mag, rel, img))
-            var rect = Rectangle(frame: Rect(n,30,2,Int(mag*20)))
+            let rect = Rectangle(frame: Rect(n,30,2,Int(mag*20)))
             view.add(rect)
         }
         

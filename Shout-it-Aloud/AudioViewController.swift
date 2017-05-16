@@ -24,10 +24,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         if isSelectMusic {
             if audioPlayer.isPlaying {
                 audioPlayer.pause()
-                playButton.setTitle("再生", for: .normal)
-            }else{
+                playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+            } else {
                 audioPlayer.play()
-                playButton.setTitle("停止", for: .normal)
+                playButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
             }
         }
     }
@@ -49,7 +49,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         if boostSwitch.isOn {
             inputVolumeSlider.maximumValue = 50
         } else {
-            inputVolumeSlider.maximumValue = 10
+            inputVolumeSlider.maximumValue = 20
         }
     }
     
@@ -64,7 +64,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             audioEngine.inputNode?.volume = 0
             inputVolumeSlider.isEnabled = false
             boostSwitch.isEnabled = false
-            inputVolumeLabel.text = "MicOff"
+            inputVolumeLabel.text = "OFF"
         }
     }
     
@@ -73,7 +73,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         mic()
         self.musicVolumeSlider.isEnabled = false
         
-        self.playButton.setTitle("再生", for: .normal)
+        self.playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
 
     }
     
@@ -94,6 +94,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         self.audioEngine.connect(self.audioEngine.inputNode!, to: self.audioEngine.mainMixerNode, format: format)
         try! self.audioEngine.start()
         self.inputVolumeLabel.text = "".appendingFormat("%.2f", inputVolumeSlider.value)
+        self.inputMicSwitch.transform = CGAffineTransform(rotationAngle: CGFloat(Float.pi*3/2))
     }
 
     @IBAction func pick(sender: UIButton) {
@@ -130,6 +131,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             isSelectMusic = true
             musicVolumeSlider.isEnabled = true
             audioPlayer.volume = musicVolumeSlider.value
+            playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
             
             // bluetooth のときだけにしたい
             /*
@@ -158,6 +160,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
     // 曲が終了した時に呼ばれる
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         isSelectMusic = false
-        playButton.setTitle("再生", for: .normal)
+        playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
     }
 }
