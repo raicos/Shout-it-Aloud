@@ -43,7 +43,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         audioEngine.inputNode?.volume = inputVolumeSlider.value
         inputVolumeLabel.text = "".appendingFormat("%.2f", inputVolumeSlider.value)
     }
-    
+    /*
     @IBOutlet weak var boostSwitch: UISwitch!
     @IBAction func boostVolumeController() {
         if boostSwitch.isOn {
@@ -52,39 +52,42 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             inputVolumeSlider.maximumValue = 20
         }
     }
-    
+    */
     @IBOutlet weak var inputMicSwitch: UISwitch!
     @IBAction func inputMicController() {
         if inputMicSwitch.isOn {
             audioEngine.inputNode?.volume = inputVolumeSlider.value
             inputVolumeSlider.isEnabled = true
-            boostSwitch.isEnabled = true
+            // boostSwitch.isEnabled = true
             inputVolumeLabel.text = "".appendingFormat("%.2f", inputVolumeSlider.value)
+            self.mic()
         } else {
             audioEngine.inputNode?.volume = 0
             inputVolumeSlider.isEnabled = false
-            boostSwitch.isEnabled = false
+            // boostSwitch.isEnabled = false
             inputVolumeLabel.text = "OFF"
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        mic()
-        self.musicVolumeSlider.isEnabled = false
         
+        self.mic()
+        self.musicVolumeSlider.isEnabled = false
         self.playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
-
+        //try! AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    /*
     @IBAction func back() {
         //self.audioPlayer.stop()
         self.dismiss(animated: true, completion: nil)
     }
+    */
 
     func mic(){
         let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatInt16,
@@ -106,12 +109,10 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         present(picker, animated: true, completion: nil)
     }
     
-    //選択がキャンセルされた場合に呼ばれる
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         dismiss(animated: true, completion: nil)
     }
     
-    // 選択完了したときに呼ばれる
     func mediaPicker(_ mediaPicker: MPMediaPickerController,
                      didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         defer {
@@ -130,7 +131,6 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
             audioPlayer.isMeteringEnabled = true
             isSelectMusic = true
             musicVolumeSlider.isEnabled = true
-            audioPlayer.volume = musicVolumeSlider.value
             playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
             
             // bluetooth のときだけにしたい
@@ -149,7 +149,8 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
                     
                 }
                 
-            }*/
+            }
+            */
             
         } else {
             self.isSelectMusic = false
