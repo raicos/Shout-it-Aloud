@@ -75,7 +75,7 @@ class AudioViewController: UIViewController, MPMediaPickerControllerDelegate, AV
         self.mic()
         self.musicVolumeSlider.isEnabled = false
         self.playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
-        //try! AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+        try! AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
     }
     
     override func didReceiveMemoryWarning() {
